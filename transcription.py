@@ -65,7 +65,7 @@ def dividir_audio(file_path, duracion_chunk_segundos=60):
             sample_width = wav.getsampwidth()
             total_segundos = n_frames / frame_rate
             
-            num_chunks = max(1, int(total_segundos / duracion_chunk_segundos))  # 🔥 Evita que num_chunks sea 0
+            num_chunks = max(1, int(total_segundos / duracion_chunk_segundos))  
             chunk_frame_count = frame_rate * duracion_chunk_segundos
             chunk_paths = []
             base_name = os.path.splitext(os.path.basename(file_path))[0]
@@ -74,9 +74,9 @@ def dividir_audio(file_path, duracion_chunk_segundos=60):
                 start_frame = i * chunk_frame_count
                 end_frame = min((i + 1) * chunk_frame_count, n_frames)
 
-                if end_frame - start_frame < frame_rate * 0.01:  # 🔥 Evita chunks < 0.01s
+                if end_frame - start_frame < frame_rate * 0.01:  
                     logging.warning(f"⚠️ [{file_path}] Chunk {i+1} ignorado por ser demasiado corto.")
-                    continue  # Saltar la creación de este chunk
+                    continue  
 
                 wav.setpos(start_frame)
                 chunk_data = wav.readframes(end_frame - start_frame)
@@ -101,6 +101,7 @@ def dividir_audio(file_path, duracion_chunk_segundos=60):
 def procesar_archivo_audio(file_path, duracion_chunk_segundos=60):
     """Procesa un archivo de audio, dividiéndolo si es necesario y transcribiéndolo."""
     try:
+        file_size_mb = os.getenv(file_path)
         file_size_mb = os.path.getsize(file_path) / (1024 * 1024)
         transcripcion_completa = ""
 
