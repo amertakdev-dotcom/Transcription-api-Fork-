@@ -6,10 +6,10 @@ import os
 
 app = FastAPI()
 
-# អនុញ្ញាតឱ្យ Frontend ហៅទៅកាន់ API បាន (Fix CORS Error)
+# បន្ថែម CORS Middleware ដើម្បីអនុញ្ញាតឱ្យ Frontend អាចទាក់ទងមកកាន់ Server បានទោះបីជាផ្ទុកនៅលើ Host ផ្សេងគ្នាក៏ដោយ
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # អាចប្តូរទៅជា URL របស់ Frontend របស់អ្នកនៅក្នុង Production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -17,9 +17,6 @@ app.add_middleware(
 
 @app.post("/transcribe/")
 async def transcribe(file: UploadFile = File(...)):
-    """
-    API endpoint para transcribir un archivo de audio.
-    """
     try:
         file_path = f"audio/temp_{file.filename}"
         os.makedirs("audio", exist_ok=True)
@@ -28,7 +25,10 @@ async def transcribe(file: UploadFile = File(...)):
             shutil.copyfileobj(file.file, buffer)
 
         transcription = procesar_archivo_audio(file_path)
-        os.remove(file_path)  # លុបឯកសារបណ្តោះអាសន្នក្រោយបំប្លែងរួច
+        
+        # លុបឯកសារបណ្តោះអាសន្នចេញក្រោយពេលបំប្លែងរួច ដើម្បីកុំឱ្យពេញទំហំផ្ទុកលើ Server
+        if os.path.exists(file_path):
+            os.remove(file_path)
 
         return {"transcription": transcription}
     except Exception as e:
