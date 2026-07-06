@@ -36,11 +36,11 @@ def transcribir_audio_groq(file_path):
     
     try:
         with open(file_path, "rb") as audio_file:
+            # 💡 បានកែប្រែដោយលុប language="es" ចេញដើម្បីឱ្យ Auto-Detect ភាសាដោយស្វ័យប្រវត្តិ
             response = client.audio.transcriptions.create(
                 file=audio_file,
                 model="whisper-large-v3",
                 response_format="json",
-                language="es",
                 temperature=0.0
             )
 
@@ -101,7 +101,6 @@ def dividir_audio(file_path, duracion_chunk_segundos=60):
 def procesar_archivo_audio(file_path, duracion_chunk_segundos=60):
     """Procesa un archivo de audio, dividiéndolo si es necesario y transcribiéndolo."""
     try:
-        file_size_mb = os.getenv(file_path)
         file_size_mb = os.path.getsize(file_path) / (1024 * 1024)
         transcripcion_completa = ""
 
