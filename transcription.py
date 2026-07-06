@@ -29,13 +29,14 @@ def transcribir_audio_groq(file_path):
     
     try:
         with open(file_path, "rb") as audio_file:
-            # បង្ខំយកភាសាខ្មែរ "km" ដើម្បីកុំឱ្យ AI ភាន់ច្រឡំជាមួយភាសាដទៃ
+            # បង្ខំយកភាសាខ្មែរ "km" និងបន្ថែម Prompt ការពារ AI បង្កើតអក្សររញ៉េរញ៉ៃពេលសំឡេងខ្សោយ ឬស្ងាត់
             response = client.audio.transcriptions.create(
                 file=audio_file,
                 model="whisper-large-v3",
                 response_format="json",
                 language="km", 
-                temperature=0.0
+                temperature=0.0,
+                prompt="នេះគឺជាសំឡេងនិយាយភាសាខ្មែរត្រឹមត្រូវច្បាស់លាស់។ សូមកុំបង្កើតពាក្យរញ៉េរញ៉ៃ បើគ្មានសំឡេងនិយាយច្បាស់ទេសូមកុំសរសេរអ្វីទាំងអស់។"
             )
 
         elapsed_time = round(time.time() - start_time, 2)
@@ -48,7 +49,6 @@ def transcribir_audio_groq(file_path):
 def procesar_archivo_audio(file_path):
     """Procesa directamente el archivo de audio (Optimizado para Live Chunks y Archivos)"""
     try:
-        # ដំណើរការភ្លាមៗដោយមិនបាច់កាត់កង់លើ Server ទេ ព្រោះ Frontend ជាអ្នកកាត់បញ្ជូនមក
         return transcribir_audio_groq(file_path)
     except Exception as e:
         logging.error(f"❌ Error al procesar: {e}")
